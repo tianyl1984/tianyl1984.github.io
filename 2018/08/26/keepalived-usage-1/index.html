@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"tianyl1984.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="keepalived环境配置及使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="keepalived环境配置及使用(1)">
+<meta property="og:url" content="https://tianyl1984.github.io/2018/08/26/keepalived-usage-1/index.html">
+<meta property="og:site_name" content="代码的那些事">
+<meta property="og:description" content="keepalived环境配置及使用">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-08-26T03:20:28.750Z">
+<meta property="article:modified_time" content="2018-09-24T05:48:25.707Z">
+<meta property="article:author" content="tianyl">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://tianyl1984.github.io/2018/08/26/keepalived-usage-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>keepalived环境配置及使用(1) | 代码的那些事</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">代码的那些事</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://tianyl1984.github.io/2018/08/26/keepalived-usage-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tianyl">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="代码的那些事">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          keepalived环境配置及使用(1)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-26 11:20:28" itemprop="dateCreated datePublished" datetime="2018-08-26T11:20:28+08:00">2018-08-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2018-09-24 13:48:25" itemprop="dateModified" datetime="2018-09-24T13:48:25+08:00">2018-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/keepalived/" itemprop="url" rel="index"><span itemprop="name">keepalived</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">keepalived环境配置及使用</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="keepalived简介"><a href="#keepalived简介" class="headerlink" title="keepalived简介"></a>keepalived简介</h3><p>keepalived起初是为LVS设计的，用来监控集群系统中各个服务节点的状态。一旦检测到故障节点，自动将故障节点剔除，故障节点恢复后自动将此节点重新加入到服务集群中。全部自动完成，无需人工干预。后来又加入了VRRP(Virtual Router Redundancy Protocol 虚拟路由器冗余协议)的功能，避免IP单点故障。</p>
+<h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><p>使用两台虚拟机做测试环境，ip分别为:192.168.0.101,192.168.0.107</p>
+<h4 id="安装并配置操作系统，系统统一为centos7"><a href="#安装并配置操作系统，系统统一为centos7" class="headerlink" title="安装并配置操作系统，系统统一为centos7"></a>安装并配置操作系统，系统统一为centos7</h4><p>配置网卡，修改 /etc/sysconfig/network-scripts/ifcfg-xxx 文件xxx为网卡名称。<br>重启网卡</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ifdown xxx</span><br><span class="line">ifup xxx</span><br></pre></td></tr></table></figure>
+<p>查看ip配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip addr show</span><br></pre></td></tr></table></figure>
+<p>修改hostname</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl set-hostname xxx</span><br><span class="line">vi /etc/hosts</span><br></pre></td></tr></table></figure>
+
+<h4 id="关闭SELinux，启用ip转发"><a href="#关闭SELinux，启用ip转发" class="headerlink" title="关闭SELinux，启用ip转发"></a>关闭SELinux，启用ip转发</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/selinux/config ##将SELINUX=enforcing改为SELINUX=disabled </span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;net.ipv4.ip_forward = 1&quot; &gt;&gt; /etc/sysctl.conf</span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装nginx作为测试的真实服务-备用"><a href="#安装nginx作为测试的真实服务-备用" class="headerlink" title="安装nginx作为测试的真实服务(备用)"></a>安装nginx作为测试的真实服务(备用)</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</span><br><span class="line">sudo yum install nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="修改防火墙策略"><a href="#修改防火墙策略" class="headerlink" title="修改防火墙策略"></a>修改防火墙策略</h4><p>开放80端口，访问nginx</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo firewall-cmd --zone=public --add-port=80/tcp --permanent</span><br><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>开放vrrp组播</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --in-interface xxx --destination 224.0.0.18 --protocol vrrp -j ACCEPT</span><br><span class="line">sudo firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<ul>
+<li>xxx为网卡名称；防火墙不开放vrrp组播会导致脑裂，两个节点都能获取VIP，为了简单可以先关闭防火墙。</li>
+</ul>
+<h4 id="同步服务器时间"><a href="#同步服务器时间" class="headerlink" title="同步服务器时间"></a>同步服务器时间</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 安装ntp服务</span></span><br><span class="line">yum install ntp</span><br><span class="line"><span class="meta">#</span><span class="bash"> 开机启动服务</span></span><br><span class="line">systemctl enable ntpd</span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动服务</span></span><br><span class="line">systemctl start ntpd</span><br><span class="line"><span class="meta">#</span><span class="bash"> 设置亚洲时区</span></span><br><span class="line">timedatectl set-timezone Asia/Shanghai</span><br><span class="line"><span class="meta">#</span><span class="bash"> 启用NTP同步</span></span><br><span class="line">timedatectl set-ntp yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 重启ntp服务</span></span><br><span class="line">systemctl restart ntpd</span><br><span class="line"><span class="meta">#</span><span class="bash"> 手动同步时间</span></span><br><span class="line">ntpq -p</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装keepalived"><a href="#安装keepalived" class="headerlink" title="安装keepalived"></a>安装keepalived</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install keepalived</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置及测试"><a href="#配置及测试" class="headerlink" title="配置及测试"></a>配置及测试</h3><h4 id="修改节点1"><a href="#修改节点1" class="headerlink" title="修改节点1"></a>修改节点1</h4><p>在节点1，修改文件<code>/etc/keepalived/keepalived.conf</code>，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vrrp_instance VI_1 &#123; ##定义一个虚拟路由器</span><br><span class="line">    state MASTER ## 状态</span><br><span class="line">    interface ens33 ##使用的网络接口</span><br><span class="line">    virtual_router_id 51 ##id，不能大于255</span><br><span class="line">    priority 100 ##优先级</span><br><span class="line">    advert_int 1 ##初始化通告</span><br><span class="line">    authentication &#123; ##认证信息</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123; ##vip信息</span><br><span class="line">        192.168.0.120</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="启动keepalived"><a href="#启动keepalived" class="headerlink" title="启动keepalived"></a>启动keepalived</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start keepalived.service</span><br></pre></td></tr></table></figure>
+<h4 id="查看ip信息"><a href="#查看ip信息" class="headerlink" title="查看ip信息"></a>查看ip信息</h4><p><code>ip addr show ens33</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    link&#x2F;ether 00:0c:29:da:ec:e6 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.0.107&#x2F;24 brd 192.168.0.255 scope global noprefixroute dynamic ens33</span><br><span class="line">       valid_lft 6491sec preferred_lft 6491sec</span><br><span class="line">    inet 192.168.0.120&#x2F;24 scope global secondary ens33</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::dcc3:cb42:5fee:f65&#x2F;64 scope link noprefixroute</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+
+<p>可以看到192.168.0.120这个vip地址已经出现在ens33网卡上，访问192.168.0.120即可访问到107上的nginx服务</p>
+<h4 id="配置节点2"><a href="#配置节点2" class="headerlink" title="配置节点2"></a>配置节点2</h4><p>节点2修改配置，保证两个节点 <code>priority</code> <strong>不相同</strong>，<code>virtual_router_id</code> <strong>必须相同</strong>，启动节点2的keepalived，查看ip信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000</span><br><span class="line">    link&#x2F;ether 00:0c:29:d1:b9:8f brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 192.168.0.101&#x2F;24 brd 192.168.0.255 scope global noprefixroute dynamic ens33</span><br><span class="line">       valid_lft 6495sec preferred_lft 6495sec</span><br><span class="line">    inet6 fe80::4bb:4b73:f333:ad8b&#x2F;64 scope link noprefixroute</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>101上由于priority值低于107所以节点进入slave模式。</p>
+<h4 id="切换验证"><a href="#切换验证" class="headerlink" title="切换验证"></a>切换验证</h4><p>107上执行<code>systemctl stop keepalived.service</code>关闭上keepalived服务，分别查看107和101ip信息可以发现ip120自动切换到了101上，重启107的keepalived服务后，又切换回107上，ip地址实现了漂移。</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>此时的配置只能保证在主节点关闭服务后ip漂移，如果nginx服务意外关闭，ip地址并不能切换。</li>
+<li>主从节点只能一个对外提供服务不能提供负载，浪费资源。</li>
+</ol>
+<p>下次主要讲解如果解决这两个问题。</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a target="_blank" rel="noopener" href="https://my.oschina.net/agiledev/blog/1975543">Keepalived &amp; LVS 搭建高可用的Web服务</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/05/jdk-timer/" rel="prev" title="TimerTask#run中抛出异常，导致任务终止">
+      <i class="fa fa-chevron-left"></i> TimerTask#run中抛出异常，导致任务终止
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/09/23/redis-master-slave/" rel="next" title="redis学习-主从">
+      redis学习-主从 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#keepalived%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">keepalived简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">环境配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%B9%B6%E9%85%8D%E7%BD%AE%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%EF%BC%8C%E7%B3%BB%E7%BB%9F%E7%BB%9F%E4%B8%80%E4%B8%BAcentos7"><span class="nav-number">2.1.</span> <span class="nav-text">安装并配置操作系统，系统统一为centos7</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%97%ADSELinux%EF%BC%8C%E5%90%AF%E7%94%A8ip%E8%BD%AC%E5%8F%91"><span class="nav-number">2.2.</span> <span class="nav-text">关闭SELinux，启用ip转发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85nginx%E4%BD%9C%E4%B8%BA%E6%B5%8B%E8%AF%95%E7%9A%84%E7%9C%9F%E5%AE%9E%E6%9C%8D%E5%8A%A1-%E5%A4%87%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">安装nginx作为测试的真实服务(备用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%98%B2%E7%81%AB%E5%A2%99%E7%AD%96%E7%95%A5"><span class="nav-number">2.4.</span> <span class="nav-text">修改防火墙策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%97%B6%E9%97%B4"><span class="nav-number">2.5.</span> <span class="nav-text">同步服务器时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85keepalived"><span class="nav-number">2.6.</span> <span class="nav-text">安装keepalived</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%B5%8B%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">配置及测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%8A%82%E7%82%B91"><span class="nav-number">3.1.</span> <span class="nav-text">修改节点1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8keepalived"><span class="nav-number">3.2.</span> <span class="nav-text">启动keepalived</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bip%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.</span> <span class="nav-text">查看ip信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%8A%82%E7%82%B92"><span class="nav-number">3.4.</span> <span class="nav-text">配置节点2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E9%AA%8C%E8%AF%81"><span class="nav-number">3.5.</span> <span class="nav-text">切换验证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">4.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tianyl</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tianyl</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
