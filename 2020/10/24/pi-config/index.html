@@ -28,7 +28,7 @@
 <meta property="og:description" content="树莓派安装系统及软件">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-10-24T06:36:36.140Z">
-<meta property="article:modified_time" content="2020-10-24T06:37:58.378Z">
+<meta property="article:modified_time" content="2020-10-24T07:47:56.223Z">
 <meta property="article:author" content="tianyl">
 <meta name="twitter:card" content="summary">
 
@@ -174,7 +174,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-10-24 14:36:36 / Modified: 14:37:58" itemprop="dateCreated datePublished" datetime="2020-10-24T14:36:36+08:00">2020-10-24</time>
+              <time title="Created: 2020-10-24 14:36:36 / Modified: 15:47:56" itemprop="dateCreated datePublished" datetime="2020-10-24T14:36:36+08:00">2020-10-24</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -205,7 +205,7 @@
 <p>默认用户名密码: pi raspberry</p>
 <p>开机自动连接wifi</p>
 <p>新建文件：<code>/boot/wpa_supplicant.conf</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">country&#x3D;CN</span><br><span class="line">ctrl_interface&#x3D;DIR&#x3D;&#x2F;var&#x2F;run&#x2F;wpa_supplicant GROUP&#x3D;netdev</span><br><span class="line">update_config&#x3D;1</span><br><span class="line">network&#x3D;&#123;</span><br><span class="line">    ssid&#x3D;&quot;TP-LINK-9DD4&quot;</span><br><span class="line">    psk&#x3D;&quot;112233abc&quot;</span><br><span class="line">    key_mgmt&#x3D;WPA-PSK</span><br><span class="line">    priority&#x3D;1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">country&#x3D;CN</span><br><span class="line">ctrl_interface&#x3D;DIR&#x3D;&#x2F;var&#x2F;run&#x2F;wpa_supplicant GROUP&#x3D;netdev</span><br><span class="line">update_config&#x3D;1</span><br><span class="line">network&#x3D;&#123;</span><br><span class="line">    ssid&#x3D;&quot;TP-LINK-A254&quot;</span><br><span class="line">    psk&#x3D;&quot;112233abccba&quot;</span><br><span class="line">    key_mgmt&#x3D;WPA-PSK</span><br><span class="line">    priority&#x3D;1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>允许 ssh 远程连接，创建文件 <code>/boot/ssh</code></p>
 <h3 id="U盘启动"><a href="#U盘启动" class="headerlink" title="U盘启动"></a>U盘启动</h3><p>SD卡和U盘都刷入系统</p>
